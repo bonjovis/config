@@ -153,3 +153,42 @@ func (c *Config) String(section string, option string) (value string, err error)
 	value = *computedVal
 	return value, err
 }
+
+func (c *Config) CString(section string, option string) (value string, err error) {
+	value, err = c.RawString(section, option)
+	if err != nil {
+		return ""
+	}
+
+	// % variables
+	computedVal, err := c.computeVar(&value, varRegExp, 2, 2, func(varName *string) string {
+		lowerVar := *varName
+		// search variable in default section as well as current section
+		varVal, _ := c.data[DEFAULT_SECTION][lowerVar]
+		if _, ok := c.data[section][lowerVar]; ok {
+			varVal = c.data[section][lowerVar]
+		}
+		return varVal.v
+	})
+	value = *computedVal
+
+	if err != nil {
+		return value
+	}
+
+	// $ environment variables
+	computedVal, err = c.computeVar(&value, envVarRegExp, 2, 1, func(varName *string) string {
+		return os.Getenv(*varName)
+	})
+	value = *computedVal
+	return value
+}
+
+func (c *Config) CInt(section string, option string) (value int) {
+	sv, err := c.String(section, option)
+	if err == nil {
+		value, err = strconv.Atoi(sv)
+	}
+
+	return value
+}
