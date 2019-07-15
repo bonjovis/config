@@ -155,7 +155,7 @@ func (c *Config) String(section string, option string) (value string, err error)
 }
 
 func (c *Config) Cstring(section string, option string) (value string) {
-	value, err = c.RawString(section, option)
+	value, err := c.RawString(section, option)
 	if err != nil {
 		return ""
 	}
