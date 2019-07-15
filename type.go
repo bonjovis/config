@@ -154,7 +154,7 @@ func (c *Config) String(section string, option string) (value string, err error)
 	return value, err
 }
 
-func (c *Config) CString(section string, option string) (value string, err error) {
+func (c *Config) Cstring(section string, option string) (value string) {
 	value, err = c.RawString(section, option)
 	if err != nil {
 		return ""
@@ -184,7 +184,7 @@ func (c *Config) CString(section string, option string) (value string, err error
 	return value
 }
 
-func (c *Config) CInt(section string, option string) (value int) {
+func (c *Config) Cint(section string, option string) (value int) {
 	sv, err := c.String(section, option)
 	if err == nil {
 		value, err = strconv.Atoi(sv)
